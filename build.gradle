@@ -1,0 +1,77 @@
+//Common configurations
+apply from: "./libraries.gradle"
+
+//default configuration for all projects
+allprojects {
+	defaultTasks 'build'
+	buildDir = "target"
+	
+	group = 'com.aerlingus'
+	version = '1.0'
+	
+	repositories {
+		mavenCentral()
+		mavenLocal()
+
+		mavenRepo name: 'jboss-nexus', url: "http://repository.jboss.org/nexus/content/groups/public/"
+		mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
+	}
+}
+
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+
+		mavenRepo name: 'jboss-nexus', url: "http://repository.jboss.org/nexus/content/groups/public/"
+		mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
+	}
+
+}
+
+subprojects { subProject ->
+	
+	//iterate through all projects except 'release' and apply configuration
+	if ( !subProject.name.startsWith( 'release' ) ) {
+		apply plugin: 'java'
+		apply plugin: 'maven-publish'
+		apply plugin: 'maven'
+
+		// appropriately inject the common dependencies into each sub-project
+		dependencies {
+			testCompile( libraries.junit )
+		}
+
+		task compile
+
+		//define default life-cycle
+		compile.dependsOn compileJava, processResources, compileTestJava, processTestResources
+
+		//generating Maven related stuff
+		publishing {
+			publications {
+				mavenJava(MavenPublication) {
+					from components.java
+
+					artifact sourcesJar { classifier "sources" }
+				}
+			}
+
+			repositories {
+				maven { 
+					url "file://$maven_repo" // change to point to your repo, e.g. http://my.org/repo
+				}
+			}
+
+			generatePomFileForMavenJavaPublication {
+				destination = file("$buildDir/generated-pom.xml")
+			}
+
+		}
+
+		task sourcesJar(type: Jar, dependsOn: compileJava) {
+			from sourceSets.main.allSource
+			classifier = 'sources'
+		}
+	}
+}

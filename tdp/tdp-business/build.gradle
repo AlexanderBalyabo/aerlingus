@@ -1,0 +1,9 @@
+dependencies {
+   compile( project(':common') )
+   compile( project(':tdp:tdp-client') )
+}
+
+jar {
+	
+}
+

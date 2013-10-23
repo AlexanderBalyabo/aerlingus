@@ -1,0 +1,13 @@
+//project specific plugins
+apply plugin: 'war'
+
+dependencies {
+	//complile scope dependency
+	compile( project(':tdp:tdp-business') )
+	//provided scope dependency
+	providedCompile "javax.servlet:servlet-api:2.5"
+}
+
+war {
+// using predefined war plugin configuration sctructure and path's
+}

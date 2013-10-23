@@ -1,0 +1,60 @@
+//project specific plugins
+apply plugin: 'java'
+apply plugin: 'distribution'
+
+//Configuration of the distribution plugin, used to build release bundle as both ZIP and TGZ
+distributions {
+	//default distribution config
+	main {
+		baseName = 'AerLingus'
+		contents {
+			from rootProject.file( 'changelog.txt' )
+
+			into('lib/required') {
+				from rootProject.project( ':common' ).configurations.archives.allArtifacts.files.filter{ file -> !file.name.endsWith('-sources.jar') }
+			}
+
+			into( 'lib/obe' ) {
+				from rootProject.project( ':obe:obe-war' ).configurations.archives.allArtifacts.files.filter{ file -> file.name.endsWith('.war') }
+			}
+
+			into( 'lib/tdp' ) {
+				from rootProject.project( ':tdp:tdp-business' ).configurations.archives.allArtifacts.files.filter{ file -> !file.name.endsWith('-sources.jar') }
+			}
+
+			into( 'project' ) {
+				from ( rootProject.projectDir ) {
+					exclude( '.git' )
+					exclude( '.gitignore' )
+					exclude( 'changelog.txt' )
+					exclude( '**/.gradle/**' )
+					exclude( '**/target/**' )
+					exclude( '**/.classpath' )
+					exclude( '**/.project' )
+					exclude( '**/.settings/**' )
+				}
+			}
+		}
+	}
+	//specific ('uat') distribution config
+	uat {
+		baseName = 'AerLingus-uat'
+		contents {
+			from rootProject.file( 'changelog.txt' )
+
+			into( 'lib/obe' ) {
+				from rootProject.project( ':obe:obe-war' ).configurations.archives.allArtifacts.files.filter{ file -> file.name.endsWith('.war') }
+			}
+
+			into ('config') {
+				from ( rootProject.project(':release').getProjectDir() ) {
+					include ('uat/*.*')
+				}
+			}
+		}
+	}
+}
+
+distZip
+distTar { compression = Compression.GZIP }
+

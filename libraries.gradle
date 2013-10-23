@@ -1,0 +1,36 @@
+// build a map of the dependency artifacts to use. Allows centralized definition of the version of artifacts to
+// use. In that respect it serves a role similar to <dependencyManagement> in Maven
+ext {
+
+	//Maven local repository location
+	maven_repo = 'd:/repo'
+	
+	//Define list of User Properties, e.g. External Sonar Server URL
+	//sonarServerURL = 'http://.....'
+	
+	//Versions list of used libraries in projects
+    junitVersion = '4.10'
+
+	// tdp section start here
+
+	//obe section starts here
+    
+	
+	//defining plugin management section
+    libraries = [
+            // Ant
+            ant: 'org.apache.ant:ant:1.8.2',
+
+            // jaxb task
+            jaxb: 'com.sun.xml.bind:jaxb-xjc:2.1.6',
+            jaxb2_basics: 'org.jvnet.jaxb2_commons:jaxb2-basics:0.6.0',
+            jaxb2_ant: 'org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.6.0',
+
+            //Maven plugin framework
+            maven_plugin: 'org.apache.maven:maven-plugin-api:3.0.5',
+            maven_plugin_tools: 'org.apache.maven.plugin-tools:maven-plugin-annotations:3.2',
+
+            // testing
+            junit: "junit:junit:${junitVersion}",
+        ]
+}

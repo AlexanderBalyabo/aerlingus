@@ -1,0 +1,9 @@
+//Modules declaration
+include 'common'
+include 'obe:obe-war'
+include 'obe:obe-business'
+include 'obe:obe-controller'
+include 'tdp:tdp-business'
+include 'tdp:tdp-client'
+include 'release'
+

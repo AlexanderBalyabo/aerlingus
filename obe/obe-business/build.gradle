@@ -1,0 +1,10 @@
+//project specific dependencies
+dependencies {
+	//compile scope dependency
+	compile( project(':common') )
+}
+
+jar {
+	
+}
+

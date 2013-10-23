@@ -1,0 +1,39 @@
+// Output directory for genereated sources
+ext.jaxbTargetDir = file( "${buildDir}/generated-sources" )
+
+dependencies {
+	compile( project(':common') )
+	compile( libraries.jaxb )
+}
+
+task generateSourcesFromSchema << {
+	
+	// perform actions
+	jaxbTargetDir.mkdirs()
+	
+	// Ant XJC task definition
+	ant.taskdef(name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.compile.asPath)
+	
+	ant.xjc(
+		destdir: jaxbTargetDir,
+		package: 'com.aerlingus.generated',
+		schema: 'src/main/resources/xsd/simple.xsd'
+	)
+	
+	ant.xjc(
+		destdir: jaxbTargetDir,
+		schema: 'src/main/resources/wsdl/CombinedTdpSv.wsdl',
+		language: 'WSDL'
+	)
+	
+}
+
+compileJava.dependsOn generateSourcesFromSchema
+
+// Use a collection to specify multiple source directories
+compileJava {
+	source = ['src/main/java', jaxbTargetDir]
+}
+
+jar { 
+}
